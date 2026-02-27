@@ -1,4 +1,5 @@
 ﻿import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, setSessionCookie } from "@/src/lib/auth";
 
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   const passwordHash = await hashPassword(password);
-  const user = await prisma.$transaction(async (tx) => {
+  const user = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const created = await tx.user.create({
       data: { username, passwordHash },
       select: { id: true, username: true, createdAt: true },
@@ -36,4 +37,3 @@ export async function POST(request: Request) {
   await setSessionCookie(user.id);
   return NextResponse.json({ user });
 }
-

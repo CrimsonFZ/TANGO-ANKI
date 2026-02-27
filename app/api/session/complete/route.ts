@@ -1,4 +1,5 @@
 ﻿import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/src/lib/auth";
 import { clampStage, getDelayMinutesForStage } from "@/src/lib/srs";
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
   const now = new Date();
   let touchedWords = 0;
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.session.update({
       where: { id: sessionId },
       data: {
@@ -101,4 +102,3 @@ export async function POST(request: Request) {
     updatedWords: uniqueWordIds.length,
   });
 }
-
