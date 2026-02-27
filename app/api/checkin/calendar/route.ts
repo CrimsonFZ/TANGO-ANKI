@@ -35,7 +35,9 @@ export async function GET(request: Request) {
     },
   });
 
-  const checkinMap = new Map(checkins.map((item: CheckinRow) => [item.dateKey, item]));
+  const checkinMap: Map<string, CheckinRow> = new Map(
+    checkins.map((item: CheckinRow) => [item.dateKey, item]),
+  );
   const daysInMonth = end.getDate();
   const items = Array.from({ length: daysInMonth }).map((_: unknown, idx: number) => {
     const date = new Date(parsed.year, parsed.mon - 1, idx + 1);
