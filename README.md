@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TANGO ANKI（日语背词）
 
-## Getting Started
+TANGO ANKI 是一个面向 JLPT（N1/N2/N3/N5N4）的日语单词背诵 Web App。  
+以“**10 个单词一组**”组织学习与复习流程：学习/复习完成后进入拼写测试（纯假名单词测假名；含汉字单词测“汉字 + 假名”），并使用间隔复习（SRS）安排到期复习。支持账号体系、签到日历与虚拟货币 **anki币**，整体 UI 采用毛玻璃 + 主题背景图风格。
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 功能特性
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 学习与复习
+- **学习（Study）**：每次加载 10 个新词，卡片点击后显示释义/信息；支持发音。
+- **复习（Review）**：先选择“认识 / 模糊 / 忘记了”，再显示释义等；并写入 SRS 复习计划。
+- **测试（Test）**：每组结束后强制测试  
+  - 纯假名单词：输入假名  
+  - 含汉字单词：输入 **汉字 + 假名**  
+  - 同一单词测试错误累计 3 次：进度回退一次（更快再复习）
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### SRS 记忆曲线
+- 基于 stage 的间隔调度（可在代码中调整间隔表）
+- 复习按钮对应不同推进策略（认识/模糊/忘记）
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 账户与数据隔离
+- 注册 / 登录 / 退出登录
+- 词书（Book/Word）为全局共享；学习进度/收藏/掌握/anki币/签到等为**每个账户独立**
 
-## Learn More
+### 签到与 anki币
+- 主页签到按钮
+- 学习日历显示已签到日期获得的币数
+- 连续签到与周满勤额外奖励（规则可配置）
+- “我的”页面显示 anki币余额、学习概览与日历
 
-To learn more about Next.js, take a look at the following resources:
+### UI/体验
+- 毛玻璃卡片、背景图主题、按钮 hover/点击反馈（可继续扩展）
+- 主页支持品牌 LOGO 展示（`public/LOGO.png`）
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 技术栈
 
-## Deploy on Vercel
+- Next.js（App Router） + Tailwind CSS
+- Bun（本地开发/运行）
+- Prisma + SQLite
+- Web Speech API（TTS 发音）
+- PM2 + Nginx（Lightsail 部署可选）
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 数据与词库结构
+
+词书数据从 JSON 导入（按 N1/N2/N3/N5N4 分目录）。导入后写入全局的 `Book` / `Word` 表。  
+用户进度等写入 `UserProgress`、`Session/StudyEvent`、`Wallet/CoinLedger`、`Checkin` 等表。
