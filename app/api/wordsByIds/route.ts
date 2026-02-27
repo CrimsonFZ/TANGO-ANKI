@@ -13,8 +13,8 @@ export async function POST(request: Request) {
   const body = (await request.json()) as Body;
   const rawIds = Array.isArray(body.wordIds) ? body.wordIds : [];
   const wordIds = rawIds
-    .map((item) => Number(item))
-    .filter((item) => Number.isInteger(item) && item > 0);
+    .map((item: unknown) => Number(item))
+    .filter((item: number) => Number.isInteger(item) && item > 0);
 
   if (!wordIds.length) {
     return NextResponse.json({ error: "Invalid payload. Expected: { wordIds: number[] }" }, { status: 400 });

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
   const totalMs = Number(body.totalMs);
   const wordIds = Array.isArray(body.wordIds)
-    ? body.wordIds.map((item) => Number(item)).filter((item) => Number.isInteger(item) && item > 0)
+    ? body.wordIds.map((item: unknown) => Number(item)).filter((item: number) => Number.isInteger(item) && item > 0)
     : [];
 
   if (!sessionId || !Number.isInteger(totalMs) || totalMs < 0) {

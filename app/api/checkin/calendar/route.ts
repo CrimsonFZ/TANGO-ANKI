@@ -1,11 +1,12 @@
 ﻿import { NextResponse } from "next/server";
+import type { Checkin } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/src/lib/auth";
 import { getDateKey } from "@/src/lib/coins";
 
 function parseMonth(month: string): { year: number; mon: number } | null {
   if (!/^\d{4}-\d{2}$/.test(month)) return null;
-  const [y, m] = month.split("-").map((x) => Number.parseInt(x, 10));
+  const [y, m] = month.split("-").map((x: string) => Number.parseInt(x, 10));
   if (!y || !m || m < 1 || m > 12) return null;
   return { year: y, mon: m };
 }
@@ -31,12 +32,11 @@ export async function GET(request: Request) {
       userId: user.id,
       dateKey: { gte: startKey, lte: endKey },
     },
-    select: { dateKey: true, coins: true },
   });
 
-  const checkinMap = new Map(checkins.map((item) => [item.dateKey, item]));
+  const checkinMap = new Map(checkins.map((item: Checkin) => [item.dateKey, item]));
   const daysInMonth = end.getDate();
-  const items = Array.from({ length: daysInMonth }).map((_, idx) => {
+  const items = Array.from({ length: daysInMonth }).map((_: unknown, idx: number) => {
     const date = new Date(parsed.year, parsed.mon - 1, idx + 1);
     const dateKey = getDateKey(date);
     const hit = checkinMap.get(dateKey);
@@ -49,4 +49,3 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ month, items });
 }
-
