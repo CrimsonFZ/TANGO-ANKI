@@ -6,6 +6,8 @@ import { getDateKey, getWeekStartDateKey, getWeekdayMon1, weeklyFullBonus, weekl
 export const dynamic = "force-dynamic";
 
 type TxClient = Parameters<typeof prisma.$transaction>[0] extends (tx: infer T) => any ? T : never;
+type WeekCheckinRow = Awaited<ReturnType<typeof prisma.checkin.findMany>>[number];
+type WeekCheckinDateRow = Pick<WeekCheckinRow, "dateKey">;
 
 function jsonNoStore(body: unknown, init?: { status?: number }) {
   return NextResponse.json(body, {
@@ -47,7 +49,7 @@ export async function POST() {
         },
         select: { dateKey: true },
       });
-      const thisWeekChecked = new Set(weekCheckins.map((item) => item.dateKey)).size;
+      const thisWeekChecked = new Set(weekCheckins.map((item: WeekCheckinDateRow) => item.dateKey)).size;
       return {
         already: true,
         dateKey,
@@ -69,7 +71,7 @@ export async function POST() {
       },
       select: { dateKey: true },
     });
-    const completed = new Set(weekCheckinsBefore.map((item) => item.dateKey)).size;
+    const completed = new Set(weekCheckinsBefore.map((item: WeekCheckinDateRow) => item.dateKey)).size;
     const k = Math.min(7, completed + 1);
     const todayCoins = weeklyRewardTable[k as keyof typeof weeklyRewardTable] ?? weeklyRewardTable[7];
 
