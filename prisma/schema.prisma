@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum BookLevel {
+  n1
+  n2
+  n3
+  n5n4
+}
+
+enum SessionMode {
+  study
+  review
+}
+
+enum CoinLedgerType {
+  checkin
+  weekly_bonus
+  admin_adjust
+  spend
+}
+
+model Book {
+  id         Int       @id @default(autoincrement())
+  level      BookLevel
+  fileName   String
+  themeName  String
+  totalWords Int
+  createdAt  DateTime  @default(now())
+
+  @@unique([level, fileName])
+}
+
+model Word {
+  id          Int       @id @default(autoincrement())
+  wordId      Int       @unique
+  bookLevel   BookLevel
+  themeName   String
+  wordName    String
+  correctDesc String
+  wordDesc    String
+  kanaReading String?
+  isKanaOnly  Boolean
+  exampleJa   String?
+  exampleZh   String?
+  createdAt   DateTime  @default(now())
+
+  userProgresses UserProgress[]
+  studyEvents    StudyEvent[]
+}
+
+model UserProgress {
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  wordId         Int
+  stage          Int       @default(0)
+  learnedAt      DateTime?
+  totalStudyMs   Int       @default(0)
+  nextReviewAt   DateTime?
+  lastReviewedAt DateTime?
+  wrongTestCount Int       @default(0)
+  mastered       Boolean   @default(false)
+  starred        Boolean   @default(false)
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [wordId], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  username     String       @unique
+  passwordHash String
+  createdAt    DateTime     @default(now())
+  sessions     Session[]
+  studyEvents  StudyEvent[]
+  wallet        Wallet?
+  checkins      Checkin[]
+  coinLedgers   CoinLedger[]
+  userProgresses UserProgress[]
+}
+
+model Session {
+  id        String      @id @default(cuid())
+  userId    Int
+  mode      SessionMode
+  bookLevel BookLevel
+  startedAt DateTime
+  endedAt   DateTime?
+  totalMs   Int         @default(0)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events    StudyEvent[]
+}
+
+model StudyEvent {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  sessionId String
+  wordId    Int?
+  type      String
+  grade     String?
+  deltaMs   Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  word    Word?   @relation(fields: [wordId], references: [wordId], onDelete: SetNull)
+}
+
+model Wallet {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  ankiBalance Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Checkin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  dateKey   String
+  weekday   Int
+  coins     Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dateKey])
+}
+
+model CoinLedger {
+  id           Int            @id @default(autoincrement())
+  userId       Int
+  dateKey      String
+  type         CoinLedgerType
+  delta        Int
+  balanceAfter Int
+  note         String?
+  createdAt    DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -1,26 +1,167 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a1425;
+  --foreground: #f4f7ff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans:
+    "Microsoft YaHei UI",
+    "Microsoft YaHei",
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans CJK SC",
+    "Noto Sans CJK JP",
+    "Noto Sans SC",
+    "Noto Sans JP",
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+  --font-mono: "Cascadia Mono", "Consolas", monospace;
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100svh;
+  background-color: #0a1425;
+  background-image:
+    radial-gradient(1200px 500px at 10% -20%, rgba(97, 140, 255, 0.35), transparent 60%),
+    radial-gradient(800px 500px at 100% 10%, rgba(45, 210, 185, 0.2), transparent 60%),
+    linear-gradient(160deg, #0b1426 0%, #16284d 45%, #102038 100%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.glass-card {
+  @apply rounded-3xl border border-white/20 bg-white/12 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.2)];
+  font-family: inherit;
+  font-variant-east-asian: normal;
+  font-feature-settings: normal;
+}
+
+.safe-top {
+  padding-top: calc(env(safe-area-inset-top) + 0.75rem);
+}
+
+.safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select {
+  font-variant-east-asian: normal !important;
+  font-feature-settings: normal !important;
+}
+
+html,
+body {
+  font-family:
+    "Microsoft YaHei UI",
+    "Microsoft YaHei",
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans CJK SC",
+    "Noto Sans CJK JP",
+    "Noto Sans SC",
+    "Noto Sans JP",
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+.cjk-safe,
+.cjk-safe * {
+  font-family:
+    "Microsoft YaHei UI",
+    "Microsoft YaHei",
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans CJK SC",
+    "Noto Sans CJK JP",
+    "Noto Sans SC",
+    "Noto Sans JP",
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif !important;
+  font-variant-east-asian: normal !important;
+  font-feature-settings: normal !important;
+  letter-spacing: normal !important;
+}
+
+.ui-primary-btn {
+  @apply transition-all duration-200 ease-out will-change-transform;
+}
+
+.ui-primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 32px rgba(8, 15, 40, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.24) inset;
+  filter: brightness(1.03);
+}
+
+.ui-primary-btn:active {
+  transform: scale(0.98);
+}
+
+.ui-frosted-card {
+  @apply transition-all duration-300 ease-out;
+}
+
+.ui-frosted-card:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 16px 36px rgba(6, 14, 36, 0.35);
+}
+
+.ui-icon-btn {
+  @apply transition-all duration-200 ease-out;
+}
+
+.ui-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+  opacity: 0.98;
+}
+
+.ui-icon-btn:active {
+  transform: scale(0.98);
+}
+
+.font-inherit {
+  font-family: inherit;
 }
