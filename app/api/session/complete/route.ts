@@ -1,5 +1,4 @@
 ﻿import { NextResponse } from "next/server";
-import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/src/lib/auth";
 import { clampStage, getDelayMinutesForStage } from "@/src/lib/srs";
@@ -9,6 +8,8 @@ type Body = {
   wordIds?: unknown;
   totalMs?: unknown;
 };
+
+type TxClient = Parameters<typeof prisma.$transaction>[0] extends (tx: infer T) => any ? T : never;
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
   const now = new Date();
   let touchedWords = 0;
 
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  await prisma.$transaction(async (tx: TxClient) => {
     await tx.session.update({
       where: { id: sessionId },
       data: {

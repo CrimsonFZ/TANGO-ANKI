@@ -1,10 +1,11 @@
 ﻿import { NextResponse } from "next/server";
-import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/src/lib/auth";
 import { getDateKey, getWeekStartDateKey, getWeekdayMon1, weeklyFullBonus, weeklyRewardTable } from "@/src/lib/coins";
 
 export const dynamic = "force-dynamic";
+
+type TxClient = Parameters<typeof prisma.$transaction>[0] extends (tx: infer T) => any ? T : never;
 
 function jsonNoStore(body: unknown, init?: { status?: number }) {
   return NextResponse.json(body, {
@@ -22,7 +23,7 @@ export async function POST() {
   const weekday = getWeekdayMon1(now);
   const weekStartKey = getWeekStartDateKey(dateKey);
 
-  const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const result = await prisma.$transaction(async (tx: TxClient) => {
     const wallet = await tx.wallet.upsert({
       where: { userId: user.id },
       update: {},
