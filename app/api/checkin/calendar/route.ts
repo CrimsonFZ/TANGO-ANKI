@@ -1,8 +1,9 @@
 ﻿import { NextResponse } from "next/server";
-import type { Checkin } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/src/lib/auth";
 import { getDateKey } from "@/src/lib/coins";
+
+type CheckinRow = Awaited<ReturnType<typeof prisma.checkin.findMany>>[number];
 
 function parseMonth(month: string): { year: number; mon: number } | null {
   if (!/^\d{4}-\d{2}$/.test(month)) return null;
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
     },
   });
 
-  const checkinMap = new Map(checkins.map((item: Checkin) => [item.dateKey, item]));
+  const checkinMap = new Map(checkins.map((item: CheckinRow) => [item.dateKey, item]));
   const daysInMonth = end.getDate();
   const items = Array.from({ length: daysInMonth }).map((_: unknown, idx: number) => {
     const date = new Date(parsed.year, parsed.mon - 1, idx + 1);
